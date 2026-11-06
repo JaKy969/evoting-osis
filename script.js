@@ -1,66 +1,95 @@
-// script.js - Frontend E-Voting OSIS
-
 document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("votingForm"); // Pastikan id form di HTML Anda sesuai
+    const step1 = document.getElementById("step1");
+    const step2 = document.getElementById("step2");
+    const nextBtn = document.getElementById("nextBtn");
+    const backBtn = document.getElementById("backBtn");
+    const greetingUser = document.getElementById("greetingUser");
+    const darkModeToggle = document.getElementById("darkModeToggle");
 
-if (form) {
-    form.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-      // Ambil nilai dari input HTML
-    const namaInput = document.getElementById("nama").value.trim();
-    const kelasInput = document.getElementById("kelas").value.trim();
-    
-      // Ambil nilai dari pilihan radio button Paslon
-    const selectedPaslon = document.querySelector('input[name="paslon"]:checked');
-
-      // Validasi jika ada form yang kosong
-    if (!namaInput || !kelasInput || !selectedPaslon) {
-        alert("Mohon lengkapi Nama, Kelas, dan pilih salah satu Paslon!");
-        return;
+    // --- FITUR DARK MODE ---
+    if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+        darkModeToggle.textContent = "☀️ Light Mode";
     }
 
-      // Susun data (payload) yang akan dikirim ke Google Apps Script
-    const payload = {
-        nama: namaInput,
-        kelas: kelasInput,
-        paslon: selectedPaslon.value // Nilai harus berupa "Paslon 1" atau "Paslon 2"
-    };
-
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJDAWvXCG9_J8LMlJZEkHHusS1Y10NE_AUIIIEUzq14gpBNZ2wYIJdx5AJoDPDQHAK/exec";
-
-      // Efek tombol saat memproses pengiriman
-      const submitBtn = document.getElementById("submitBtn"); // Pastikan id tombol submit sesuai
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Mengirim Suara...";
-    }
-
-      // Kirim data menggunakan Fetch API (metode POST)
-    fetch(WEB_APP_URL, {
-        method: "POST",
-        mode: "no-cors", // Mencegah blokir CORS pada Google Apps Script
-        headers: {
-        "Content-Type": "text/plain;charset=utf-8",
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(() => {
-        alert("Suara Anda berhasil dikirim! Terima kasih.");
-        
-        // Reset form dan muat ulang halaman
-        form.reset();
-        location.reload();
-    })
-    .catch(error => {
-        console.error("Terjadi kesalahan:", error);
-        alert("Gagal mengirim suara. Periksa koneksi internet Anda.");
-        
-        if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Kirim Suara";
+    darkModeToggle.addEventListener("click", function () {
+        if (document.documentElement.getAttribute("data-theme") === "dark") {
+            document.documentElement.removeAttribute("data-theme");
+            localStorage.setItem("theme", "light");
+            darkModeToggle.textContent = "🌙 Dark Mode";
+        } else {
+            document.documentElement.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+            darkModeToggle.textContent = "☀️ Light Mode";
         }
     });
+
+    // --- NAVIGASI STEP 1 KE STEP 2 ---
+    let namaGlobal = "";
+    let kelasGlobal = "";
+
+    nextBtn.addEventListener("click", function () {
+        const namaInput = document.getElementById("nama").value.trim();
+        const kelasInput = document.getElementById("kelas").value.trim();
+
+        if (!namaInput || !kelasInput) {
+            alert("Mohon isi Nama Lengkap dan Kelas terlebih dahulu!");
+            return;
+        }
+
+        namaGlobal = namaInput;
+        kelasGlobal = kelasInput;
+
+        // Tampilkan sapaan & pindah ke halaman paslon
+        greetingUser.textContent = `Halo, ${namaGlobal} (${kelasGlobal}). Silakan pilih kandidat jagoan Anda:`;
+        step1.style.display = "none";
+        step2.style.display = "block";
     });
-}
+
+    backBtn.addEventListener("click", function () {
+        step2.style.display = "none";
+        step1.style.display = "block";
+    });
+
+    // --- KIRIM VOTE KE GOOGLE APPS SCRIPT ---
+    const voteButtons = document.querySelectorAll(".voteBtn");
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJDAWvXCG9_J8LMlJZEkHHusS1Y10NE_AUIIIEUzq14gpBNZ2wYIJdx5AJoDPDQHAK/exec";
+
+    voteButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            const selectedPaslon = this.getAttribute("data-paslon");
+
+            if (!confirm(`Apakah Anda yakin ingin memilih ${selectedPaslon}? Pilihan tidak dapat diubah.`)) {
+                return;
+            }
+
+            const payload = {
+                nama: namaGlobal,
+                kelas: kelasGlobal,
+                paslon: selectedPaslon
+            };
+
+            button.disabled = true;
+            button.textContent = "Mengirim...";
+
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8",
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                alert("Terima kasih! Suara Anda berhasil dikirim.");
+                location.reload();
+            })
+            .catch(error => {
+                console.error("Terjadi kesalahan:", error);
+                alert("Gagal mengirim suara. Periksa koneksi internet.");
+                button.disabled = false;
+                button.textContent = `Vote ${selectedPaslon}`;
+            });
+        });
+    });
 });

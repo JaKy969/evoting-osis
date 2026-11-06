@@ -4,121 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Voting OSIS</title>
-    <!-- Menghubungkan ke file CSS eksternal -->
     <link rel="stylesheet" href="style.css">
-    
-    <!-- CSS Cadangan (Internal) agar tampilan dijamin tidak polos/acak-acakan -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 25px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .radio-group {
-            margin-top: 10px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        .radio-group input[type="radio"] {
-            margin-right: 8px;
-            cursor: pointer;
-        }
-        .radio-group label {
-            font-weight: normal;
-            margin-bottom: 0;
-            cursor: pointer;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.2s;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 <body>
 
     <div class="container">
+        <!-- Tombol Dark Mode -->
+        <button id="darkModeToggle" class="dark-toggle">🌙 Dark Mode</button>
+
         <h2>E-Voting OSIS</h2>
         
-        <!-- Form utama pemilihan -->
-        <form id="votingForm">
-            <!-- Input Nama Lengkap -->
+        <!-- BAGIAN 1: FORM IDENTITAS (Nama & Kelas) -->
+        <div id="step1" class="step-section">
             <div class="form-group">
                 <label for="nama">Nama Lengkap:</label>
                 <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda" required>
             </div>
 
-            <!-- Input Kelas -->
             <div class="form-group">
                 <label for="kelas">Kelas:</label>
                 <input type="text" id="kelas" placeholder="Contoh: XI-4" required>
             </div>
 
-            <!-- Pilihan Paslon -->
-            <div class="form-group">
-                <label>Pilih Pasangan Calon:</label>
-                <div class="radio-group">
-                    <input type="radio" id="paslon1" name="paslon" value="Paslon 1" required>
-                    <label for="paslon1">Paslon 1 (Nama Kandidat 1)</label>
-                </div>
-                <div class="radio-group">
-                    <input type="radio" id="paslon2" name="paslon" value="Paslon 2">
-                    <label for="paslon2">Paslon 2 (Nama Kandidat 2)</label>
-                </div>
+            <button type="button" id="nextBtn">Lanjut Memilih</button>
+        </div>
+
+        <!-- BAGIAN 2: PILIHAN PASLON (Ada Slogan & Tombol Vote Sendiri) -->
+        <div id="step2" class="step-section" style="display: none;">
+            <h3>Silakan Pilih Pasangan Calon</h3>
+            <p id="greetingUser" class="greeting"></p>
+
+            <div class="paslon-card">
+                <h4>Paslon 1</h4>
+                <p class="slogan">"Mewujudkan OSIS yang Kreatif, Inovatif, dan Berkarakter"</p>
+                <button type="button" class="voteBtn" data-paslon="Paslon 1">Vote Paslon 1</button>
             </div>
 
-            <!-- Tombol Kirim -->
-            <button type="submit" id="submitBtn">Kirim Suara</button>
-        </form>
+            <div class="paslon-card">
+                <h4>Paslon 2</h4>
+                <p class="slogan">"Bersama Membangun Sekolah Unggul, Disiplin, dan Berprestasi"</p>
+                <button type="button" class="voteBtn" data-paslon="Paslon 2">Vote Paslon 2</button>
+            </div>
+
+            <button type="button" id="backBtn" class="btn-secondary">Kembali</button>
+        </div>
     </div>
 
-    <!-- Menghubungkan ke file JavaScript -->
     <script src="script.js"></script>
 </body>
 </html>
