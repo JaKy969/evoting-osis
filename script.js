@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Elemen DOM
     const step1 = document.getElementById("step1");
     const step2 = document.getElementById("step2");
     const stepIndicator1 = document.getElementById("stepIndicator1");
@@ -10,12 +9,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const greetingNama = document.getElementById("greetingNama");
     const greetingKelas = document.getElementById("greetingKelas");
 
-    // Dark Mode Toggle Switch
     const toggleSwitch = document.getElementById("checkbox");
     const themeLabel = document.getElementById("theme-label");
 
-    // Modal Konfirmasi Pop-up
+    // Modal Konfirmasi & Modal Sukses
     const confirmModal = document.getElementById("confirmModal");
+    const successModal = document.getElementById("successModal");
     const selectedPaslonText = document.getElementById("selectedPaslonText");
     const cancelModalBtn = document.getElementById("cancelModalBtn");
     const confirmVoteBtn = document.getElementById("confirmVoteBtn");
@@ -91,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
         confirmModal.style.display = "none";
     });
 
-    // --- 4. KIRIM DATA KE GOOGLE APPS SCRIPT ---
+    // --- 4. KIRIM DATA KE GOOGLE APPS SCRIPT & MUNCULKAN POP-UP TERIMA KASIH ---
     confirmVoteBtn.addEventListener("click", function () {
         confirmVoteBtn.disabled = true;
         cancelModalBtn.disabled = true;
@@ -112,8 +111,14 @@ document.addEventListener("DOMContentLoaded", function () {
             body: JSON.stringify(payload)
         })
         .then(() => {
-            alert(`Terima kasih! Suara Anda untuk ${paslonTerpilih} telah berhasil dicatat.`);
-            location.reload();
+            // Sembunyikan modal konfirmasi, tampilkan modal sukses (terima kasih)
+            confirmModal.style.display = "none";
+            successModal.style.display = "flex";
+
+            // Tunggu 2 detik, lalu refresh halaman otomatis
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
         })
         .catch(error => {
             console.error("Error:", error);
