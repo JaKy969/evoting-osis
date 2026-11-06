@@ -1,27 +1,50 @@
-<form id="votingForm">
-<!-- Kotak Input Nama -->
-<div class="form-group">
-    <label for="nama">Nama Lengkap:</label>
-    <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda" required>
-</div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Voting OSIS</title>
+    <!-- Menghubungkan ke file CSS eksternal -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<!-- Kotak Input Kelas -->
-<div class="form-group">
-    <label for="kelas">Kelas:</label>
-    <input type="text" id="kelas" placeholder="Contoh: XI-4" required>
-</div>
+    <div class="container">
+        <h2>E-Voting OSIS</h2>
+        
+        <!-- Form utama pemilihan -->
+        <form id="votingForm">
+            <!-- Input Nama Lengkap -->
+            <div class="form-group">
+                <label for="nama">Nama Lengkap:</label>
+                <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda" required>
+            </div>
 
-<!-- Pilihan Paslon -->
-<div class="form-group">
-    <label>Pilih Paslon:</label><br>
-    <label>
-    <input type="radio" name="paslon" value="Paslon 1" required> Paslon 1
-    </label><br>
-    <label>
-    <input type="radio" name="paslon" value="Paslon 2"> Paslon 2
-    </label>
-</div>
+            <!-- Input Kelas -->
+            <div class="form-group">
+                <label for="kelas">Kelas:</label>
+                <input type="text" id="kelas" placeholder="Contoh: XI-4" required>
+            </div>
 
-<!-- Tombol Kirim -->
-<button type="submit" id="submitBtn">Kirim Suara</button>
-</form>
+            <!-- Pilihan Paslon -->
+            <div class="form-group">
+                <label>Pilih Pasangan Calon:</label>
+                <div class="radio-group">
+                    <input type="radio" id="paslon1" name="paslon" value="Paslon 1" required>
+                    <label for="paslon1">Paslon 1 (Nama Kandidat 1)</label>
+                </div>
+                <div class="radio-group">
+                    <input type="radio" id="paslon2" name="paslon" value="Paslon 2">
+                    <label for="paslon2">Paslon 2 (Nama Kandidat 2)</label>
+                </div>
+            </div>
+
+            <!-- Tombol Kirim -->
+            <button type="submit" id="submitBtn">Kirim Suara</button>
+        </form>
+    </div>
+
+    <!-- Menghubungkan ke file JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
