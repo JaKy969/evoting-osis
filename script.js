@@ -3,15 +3,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("votingForm"); // Pastikan id form di HTML Anda sesuai
 
-  // 1. Cek apakah perangkat ini sudah pernah vote sebelumnya
-if (localStorage.getItem("sudah_vote") === "true") {
-    alert("Perangkat ini sudah digunakan untuk melakukan voting sebelumnya!");
-    if (form) {
-    form.innerHTML = "<h3 style='text-align:center; color:red;'>Anda sudah melakukan voting. Terima kasih atas partisipasi Anda!</h3>";
-    }
-    return;
-}
-
 if (form) {
     form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -36,7 +27,6 @@ if (form) {
         paslon: selectedPaslon.value // Nilai harus berupa "Paslon 1" atau "Paslon 2"
     };
 
-      // ⚠️ GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT TERBARU ANDA
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJDAWvXCG9_J8LMlJZEkHHusS1Y10NE_AUIIIEUzq14gpBNZ2wYIJdx5AJoDPDQHAK/exec";
 
       // Efek tombol saat memproses pengiriman
@@ -56,9 +46,6 @@ if (form) {
         body: JSON.stringify(payload)
     })
     .then(() => {
-        // Tandai di perangkat ini bahwa sudah melakukan vote
-        localStorage.setItem("sudah_vote", "true");
-
         alert("Suara Anda berhasil dikirim! Terima kasih.");
         
         // Reset form dan muat ulang halaman
