@@ -1,134 +1,249 @@
 :root {
-    --bg-color: #f4f7f6;
-    --container-bg: #ffffff;
-    --text-color: #333333;
-    --label-color: #555555;
-    --input-bg: #ffffff;
-    --input-border: #ccc;
-    --card-bg: #f9f9f9;
+    --bg-body: #f0f2f5;
+    --bg-card: #ffffff;
+    --text-main: #1c1e21;
+    --text-muted: #65676b;
+    --border-color: #e4e6eb;
+    --input-bg: #f5f6f7;
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --paslon-bg: #f8f9fa;
+    --paslon-border: #dee2e6;
+    --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="dark"] {
-    --bg-color: #121212;
-    --container-bg: #1e1e1e;
-    --text-color: #e0e0e0;
-    --label-color: #bbbbbb;
-    --input-bg: #2d2d2d;
-    --input-border: #444444;
-    --card-bg: #252525;
+    --bg-body: #121212;
+    --bg-card: #1e1e1e;
+    --text-main: #f5f5f5;
+    --text-muted: #b0b3b8;
+    --border-color: #333333;
+    --input-bg: #2a2a2a;
+    --primary-color: #0d6efd;
+    --primary-hover: #0b5ed7;
+    --paslon-bg: #252525;
+    --paslon-border: #3d3d3d;
+    --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+* {
+    box-sizing: border-box;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
     margin: 0;
     padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    transition: background-color 0.3s, color 0.3s;
 }
 
-.container {
-    background: var(--container-bg);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.main-card {
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
     width: 100%;
-    max-width: 450px;
-    position: relative;
+    max-width: 480px;
+    padding: 28px;
+    border: 1px solid var(--border-color);
 }
 
-.dark-toggle {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: none;
-    border: 1px solid var(--input-border);
-    color: var(--text-color);
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-h2, h3 {
-    text-align: center;
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
 }
 
+.card-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.theme-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+/* Stepper Indicator */
+.stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.5;
+}
+
+.step.active {
+    opacity: 1;
+}
+
+.step-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--border-color);
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.step.active .step-number {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.step-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.step-line {
+    flex: 1;
+    height: 2px;
+    background-color: var(--border-color);
+    margin: 0 12px;
+}
+
+/* Form Styles */
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: var(--label-color);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-muted);
 }
 
 input[type="text"] {
     width: 100%;
-    padding: 10px;
-    border: 1px solid var(--input-border);
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
     background-color: var(--input-bg);
-    color: var(--text-color);
-    border-radius: 4px;
-    box-sizing: border-box;
+    color: var(--text-main);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
 }
 
-button {
+input[type="text"]:focus {
+    border-color: var(--primary-color);
+}
+
+/* Buttons */
+.btn {
     width: 100%;
     padding: 12px;
-    background-color: #007bff;
-    color: white;
     border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.2s;
 }
 
-button:hover {
-    background-color: #0056b3;
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
 }
 
 .btn-secondary {
-    background-color: #6c757d;
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    margin-top: 15px;
 }
+
 .btn-secondary:hover {
-    background-color: #5a6268;
+    background-color: var(--input-bg);
+}
+
+.btn-vote {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+/* Paslon Cards */
+.user-greeting {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.user-greeting p {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+}
+
+.user-greeting small {
+    color: var(--text-muted);
+}
+
+.paslon-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .paslon-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--input-border);
-    padding: 15px;
-    border-radius: 6px;
-    margin-bottom: 15px;
+    background-color: var(--paslon-bg);
+    border: 1px solid var(--paslon-border);
+    border-radius: 10px;
+    padding: 18px;
     text-align: center;
+    position: relative;
 }
 
-.paslon-card h4 {
-    margin: 0 0 5px 0;
-    color: #007bff;
+.paslon-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 4px;
 }
 
-.slogan {
+.paslon-avatar {
+    font-size: 2.2rem;
+    margin-bottom: 6px;
+}
+
+.paslon-card h3 {
+    margin: 4px 0 6px 0;
+}
+
+.paslon-slogan {
     font-style: italic;
-    font-size: 13px;
-    color: var(--label-color);
-    margin-bottom: 10px;
-}
-
-.greeting {
-    text-align: center;
-    font-size: 14px;
-    margin-bottom: 15px;
-    color: var(--label-color);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 14px;
 }

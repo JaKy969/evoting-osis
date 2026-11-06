@@ -8,45 +8,69 @@
 </head>
 <body>
 
-    <div class="container">
-        <!-- Tombol Dark Mode -->
-        <button id="darkModeToggle" class="dark-toggle">🌙 Dark Mode</button>
-
-        <h2>E-Voting OSIS</h2>
-        
-        <!-- BAGIAN 1: FORM IDENTITAS (Nama & Kelas) -->
-        <div id="step1" class="step-section">
-            <div class="form-group">
-                <label for="nama">Nama Lengkap:</label>
-                <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda" required>
-            </div>
-
-            <div class="form-group">
-                <label for="kelas">Kelas:</label>
-                <input type="text" id="kelas" placeholder="Contoh: XI-4" required>
-            </div>
-
-            <button type="button" id="nextBtn">Lanjut Memilih</button>
+    <div class="main-card">
+        <!-- Header & Dark Mode Toggle -->
+        <div class="card-header">
+            <h2>E-Voting OSIS</h2>
+            <button id="darkModeToggle" class="theme-toggle-btn">🌙 Dark Mode</button>
         </div>
 
-        <!-- BAGIAN 2: PILIHAN PASLON (Ada Slogan & Tombol Vote Sendiri) -->
-        <div id="step2" class="step-section" style="display: none;">
-            <h3>Silakan Pilih Pasangan Calon</h3>
-            <p id="greetingUser" class="greeting"></p>
+        <!-- Progress Indicator -->
+        <div class="stepper">
+            <div class="step step-1 active" id="stepIndicator1">
+                <span class="step-number">1</span>
+                <span class="step-label">Identitas</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step step-2" id="stepIndicator2">
+                <span class="step-number">2</span>
+                <span class="step-label">Pilihan Paslon</span>
+            </div>
+        </div>
 
-            <div class="paslon-card">
-                <h4>Paslon 1</h4>
-                <p class="slogan">"Mewujudkan OSIS yang Kreatif, Inovatif, dan Berkarakter"</p>
-                <button type="button" class="voteBtn" data-paslon="Paslon 1">Vote Paslon 1</button>
+        <!-- LANGKAH 1: INPUT IDENTITAS -->
+        <div id="step1" class="step-content">
+            <div class="form-group">
+                <label for="nama">Nama Lengkap</label>
+                <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda" autocomplete="off" required>
             </div>
 
-            <div class="paslon-card">
-                <h4>Paslon 2</h4>
-                <p class="slogan">"Bersama Membangun Sekolah Unggul, Disiplin, dan Berprestasi"</p>
-                <button type="button" class="voteBtn" data-paslon="Paslon 2">Vote Paslon 2</button>
+            <div class="form-group">
+                <label for="kelas">Kelas</label>
+                <input type="text" id="kelas" placeholder="Contoh: XI IPA 2" autocomplete="off" required>
             </div>
 
-            <button type="button" id="backBtn" class="btn-secondary">Kembali</button>
+            <button type="button" id="nextBtn" class="btn btn-primary">Lanjut ke Pemilihan &rarr;</button>
+        </div>
+
+        <!-- LANGKAH 2: PILIHAN PASLON -->
+        <div id="step2" class="step-content" style="display: none;">
+            <div class="user-greeting">
+                <p>Halo, <strong id="greetingNama">...</strong> (<span id="greetingKelas">...</span>)</p>
+                <small>Silakan tentukan pilihan pasangan calon pilihan Anda:</small>
+            </div>
+
+            <div class="paslon-grid">
+                <!-- Paslon 1 -->
+                <div class="paslon-card">
+                    <div class="paslon-badge">01</div>
+                    <div class="paslon-avatar">🗳️</div>
+                    <h3>Paslon 1</h3>
+                    <p class="paslon-slogan">"Mewujudkan OSIS yang Kreatif, Inovatif, dan Berkarakter"</p>
+                    <button type="button" class="btn btn-vote voteBtn" data-paslon="Paslon 1">Pilih Paslon 1</button>
+                </div>
+
+                <!-- Paslon 2 -->
+                <div class="paslon-card">
+                    <div class="paslon-badge">02</div>
+                    <div class="paslon-avatar">🗳️</div>
+                    <h3>Paslon 2</h3>
+                    <p class="paslon-slogan">"Bersama Membangun Sekolah Unggul, Disiplin, dan Berprestasi"</p>
+                    <button type="button" class="btn btn-vote voteBtn" data-paslon="Paslon 2">Pilih Paslon 2</button>
+                </div>
+            </div>
+
+            <button type="button" id="backBtn" class="btn btn-secondary">&larr; Kembali ke Identitas</button>
         </div>
     </div>
 
