@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmVoteBtn = document.getElementById("confirmVoteBtn");
 
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJDAWvXCG9_J8LMlJZEkHHusS1Y10NE_AUIIIEUzq14gpBNZ2wYIJdx5AJoDPDQHAK/exec";
-
     let namaGlobal = "";
     let kelasGlobal = "";
     let paslonTerpilih = "";
