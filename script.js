@@ -1,123 +1,79 @@
-// GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA!
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJDAWvXCG9_J8LMlJZEkHHusS1Y10NE_AUIIIEUzq14gpBNZ2wYIJdx5AJoDPDQHAK/exec";
+// script.js - Frontend E-Voting OSIS
 
-let currentUser = "";
-let currentClass = "";
-let selectedPaslon = "";
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("votingForm"); // Pastikan id form di HTML Anda sesuai
 
-// 1. INSIALISASI SAAT HALAMAN DIMUAT
-document.addEventListener("DOMContentLoaded", () => {
-    // Cek apakah perangkat ini sudah pernah voting
-    if (localStorage.getItem("osis_has_voted")) {
-        showSection("success-section");
+  // 1. Cek apakah perangkat ini sudah pernah vote sebelumnya
+if (localStorage.getItem("sudah_vote") === "true") {
+    alert("Perangkat ini sudah digunakan untuk melakukan voting sebelumnya!");
+    if (form) {
+    form.innerHTML = "<h3 style='text-align:center; color:red;'>Anda sudah melakukan voting. Terima kasih atas partisipasi Anda!</h3>";
+    }
+    return;
+}
+
+if (form) {
+    form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+      // Ambil nilai dari input HTML
+    const namaInput = document.getElementById("nama").value.trim();
+    const kelasInput = document.getElementById("kelas").value.trim();
+    
+      // Ambil nilai dari pilihan radio button Paslon
+    const selectedPaslon = document.querySelector('input[name="paslon"]:checked');
+
+      // Validasi jika ada form yang kosong
+    if (!namaInput || !kelasInput || !selectedPaslon) {
+        alert("Mohon lengkapi Nama, Kelas, dan pilih salah satu Paslon!");
         return;
     }
 
-    // Inisialisasi Tema
-    const savedTheme = localStorage.getItem("osis_theme");
-    const themeCheckbox = document.getElementById("checkbox-theme");
-    const themeIcon = document.getElementById("theme-icon");
-
-    if (savedTheme === "dark") {
-        document.documentElement.setAttribute("data-theme", "dark");
-        if (themeCheckbox) themeCheckbox.checked = true;
-        if (themeIcon) themeIcon.innerText = "☀️";
-    } else {
-        if (themeIcon) themeIcon.innerText = "🌙";
-    }
-
-    // Event Listener Form Login
-    const loginForm = document.getElementById("login-form");
-    if (loginForm) {
-        loginForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const namaInput = document.getElementById("nama").value.trim();
-            const kelasInput = document.getElementById("kelas").value.trim();
-
-            if (!namaInput || !kelasInput) {
-                document.getElementById("login-message").innerText = "Harap isi nama dan kelas!";
-                return;
-            }
-
-            currentUser = namaInput;
-            currentClass = kelasInput;
-
-            document.getElementById("user-display").innerText = currentUser;
-            document.getElementById("class-display").innerText = currentClass;
-
-            showSection("voting-section");
-        });
-    }
-});
-
-// 2. FUNGSI NAVIGASI TAMPILAN
-function showSection(sectionId) {
-    document.getElementById("login-section").classList.add("hidden");
-    document.getElementById("voting-section").classList.add("hidden");
-    document.getElementById("success-section").classList.add("hidden");
-
-    const activeSection = document.getElementById(sectionId);
-    if (activeSection) {
-        activeSection.classList.remove("hidden");
-    }
-}
-
-// 3. FUNGSI MODAL KONFIRMASI
-function openConfirmModal(paslonName) {
-    selectedPaslon = paslonName;
-    document.getElementById("selected-paslon-text").innerText = paslonName;
-    document.getElementById("confirm-modal").classList.remove("hidden");
-}
-
-function closeConfirmModal() {
-    document.getElementById("confirm-modal").classList.add("hidden");
-}
-
-// 4. FUNGSI KIRIM SUARA KE GOOGLE SHEETS
-function submitVote() {
-    closeConfirmModal();
-    
-    // Tampilkan status loading sederhana di tombol
-    const primaryBtns = document.querySelectorAll(".btn-primary");
-    primaryBtns.forEach(btn => btn.innerText = "Mengirim Suara...");
-
+      // Susun data (payload) yang akan dikirim ke Google Apps Script
     const payload = {
-        nama: currentUser,
-        kelas: currentClass,
-        paslon: selectedPaslon
+        nama: namaInput,
+        kelas: kelasInput,
+        paslon: selectedPaslon.value // Nilai harus berupa "Paslon 1" atau "Paslon 2"
     };
 
-    fetch(SCRIPT_URL, {
+      // ⚠️ GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT TERBARU ANDA
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJDAWvXCG9_J8LMlJZEkHHusS1Y10NE_AUIIIEUzq14gpBNZ2wYIJdx5AJoDPDQHAK/exec";
+
+      // Efek tombol saat memproses pengiriman
+      const submitBtn = document.getElementById("submitBtn"); // Pastikan id tombol submit sesuai
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Mengirim Suara...";
+    }
+
+      // Kirim data menggunakan Fetch API (metode POST)
+    fetch(WEB_APP_URL, {
         method: "POST",
-        mode: "no-cors",
+        mode: "no-cors", // Mencegah blokir CORS pada Google Apps Script
         headers: {
-            "Content-Type": "application/json"
+        "Content-Type": "text/plain;charset=utf-8",
         },
         body: JSON.stringify(payload)
     })
     .then(() => {
-        // Tandai di browser bahwa akun/HP ini sudah vote
-        localStorage.setItem("osis_has_voted", "true");
-        showSection("success-section");
+        // Tandai di perangkat ini bahwa sudah melakukan vote
+        localStorage.setItem("sudah_vote", "true");
+
+        alert("Suara Anda berhasil dikirim! Terima kasih.");
+        
+        // Reset form dan muat ulang halaman
+        form.reset();
+        location.reload();
     })
-    .catch((error) => {
-        console.error("Error:", error);
+    .catch(error => {
+        console.error("Terjadi kesalahan:", error);
         alert("Gagal mengirim suara. Periksa koneksi internet Anda.");
+        
+        if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Kirim Suara";
+        }
+    });
     });
 }
-
-// 5. FUNGSI TOGGLE DARK/LIGHT MODE (SWITCH)
-function toggleTheme() {
-    const themeCheckbox = document.getElementById("checkbox-theme");
-    const themeIcon = document.getElementById("theme-icon");
-
-    if (themeCheckbox.checked) {
-        document.documentElement.setAttribute("data-theme", "dark");
-        localStorage.setItem("osis_theme", "dark");
-        if (themeIcon) themeIcon.innerText = "☀️";
-    } else {
-        document.documentElement.removeAttribute("data-theme");
-        localStorage.setItem("osis_theme", "light");
-        if (themeIcon) themeIcon.innerText = "🌙";
-    }
-}
+});
