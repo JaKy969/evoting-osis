@@ -1,29 +1,29 @@
 :root {
-    --bg-body: #f0f2f5;
+    --bg-body: #eef2f5;
     --bg-card: #ffffff;
-    --text-main: #1c1e21;
-    --text-muted: #65676b;
-    --border-color: #e4e6eb;
-    --input-bg: #f5f6f7;
-    --primary-color: #007bff;
-    --primary-hover: #0056b3;
-    --paslon-bg: #f8f9fa;
-    --paslon-border: #dee2e6;
-    --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --text-main: #2b2d42;
+    --text-muted: #6c757d;
+    --border-color: #e0e0e0;
+    --input-bg: #f8f9fa;
+    --primary-color: #4361ee;
+    --primary-hover: #3a0ca3;
+    --paslon-bg: #ffffff;
+    --paslon-border: #e9ecef;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="dark"] {
     --bg-body: #121212;
     --bg-card: #1e1e1e;
-    --text-main: #f5f5f5;
-    --text-muted: #b0b3b8;
-    --border-color: #333333;
-    --input-bg: #2a2a2a;
-    --primary-color: #0d6efd;
-    --primary-hover: #0b5ed7;
+    --text-main: #f8f9fa;
+    --text-muted: #adb5bd;
+    --border-color: #2d2d2d;
+    --input-bg: #2b2b2b;
+    --primary-color: #4cc9f0;
+    --primary-hover: #4895ef;
     --paslon-bg: #252525;
-    --paslon-border: #3d3d3d;
-    --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --paslon-border: #333333;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -45,7 +45,7 @@ body {
 
 .main-card {
     background-color: var(--bg-card);
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: var(--shadow);
     width: 100%;
     max-width: 480px;
@@ -65,17 +65,63 @@ body {
     font-size: 1.4rem;
 }
 
-.theme-toggle-btn {
-    background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-    padding: 6px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 0.85rem;
+/* TOGGLE SWITCH DARK MODE */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* Stepper Indicator */
+.theme-switch {
+    display: inline-block;
+    height: 24px;
+    position: relative;
+    width: 46px;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.slider {
+    background-color: #ccc;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: .4s;
+}
+
+.slider:before {
+    background-color: #fff;
+    bottom: 3px;
+    content: "";
+    height: 18px;
+    left: 3px;
+    position: absolute;
+    transition: .4s;
+    width: 18px;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* STEPPER INDICATOR */
 .stepper {
     display: flex;
     align-items: center;
@@ -87,7 +133,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 .step.active {
@@ -124,7 +170,7 @@ body {
     margin: 0 12px;
 }
 
-/* Form Styles */
+/* FORM STYLES */
 .form-group {
     margin-bottom: 18px;
 }
@@ -152,7 +198,7 @@ input[type="text"]:focus {
     border-color: var(--primary-color);
 }
 
-/* Buttons */
+/* BUTTONS */
 .btn {
     width: 100%;
     padding: 12px;
@@ -188,7 +234,7 @@ input[type="text"]:focus {
     color: #ffffff;
 }
 
-/* Paslon Cards */
+/* PASLON CARDS & IMAGES */
 .user-greeting {
     text-align: center;
     margin-bottom: 20px;
@@ -208,16 +254,17 @@ input[type="text"]:focus {
 .paslon-grid {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 18px;
 }
 
 .paslon-card {
     background-color: var(--paslon-bg);
     border: 1px solid var(--paslon-border);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 18px;
     text-align: center;
     position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 .paslon-badge {
@@ -228,13 +275,23 @@ input[type="text"]:focus {
     color: #ffffff;
     font-size: 0.75rem;
     font-weight: bold;
-    padding: 3px 8px;
-    border-radius: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
 }
 
-.paslon-avatar {
-    font-size: 2.2rem;
-    margin-bottom: 6px;
+.paslon-img-container {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 12px auto;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--primary-color);
+}
+
+.paslon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .paslon-card h3 {
@@ -246,4 +303,50 @@ input[type="text"]:focus {
     font-size: 0.85rem;
     color: var(--text-muted);
     margin-bottom: 14px;
+}
+
+/* POP-UP MODAL KONFIRMASI */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--bg-card);
+    padding: 24px;
+    border-radius: 12px;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+}
+
+.modal-subtext {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-cancel {
+    background-color: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
 }

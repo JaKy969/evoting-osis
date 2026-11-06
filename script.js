@@ -9,33 +9,43 @@ document.addEventListener("DOMContentLoaded", function () {
     const backBtn = document.getElementById("backBtn");
     const greetingNama = document.getElementById("greetingNama");
     const greetingKelas = document.getElementById("greetingKelas");
-    const darkModeToggle = document.getElementById("darkModeToggle");
 
-    // URL Apps Script Backend Anda
+    // Dark Mode Toggle Switch
+    const toggleSwitch = document.getElementById("checkbox");
+    const themeLabel = document.getElementById("theme-label");
+
+    // Modal Konfirmasi Pop-up
+    const confirmModal = document.getElementById("confirmModal");
+    const selectedPaslonText = document.getElementById("selectedPaslonText");
+    const cancelModalBtn = document.getElementById("cancelModalBtn");
+    const confirmVoteBtn = document.getElementById("confirmVoteBtn");
+
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJDAWvXCG9_J8LMlJZEkHHusS1Y10NE_AUIIIEUzq14gpBNZ2wYIJdx5AJoDPDQHAK/exec";
 
-    // --- 1. SINKRONISASI DARK MODE ---
+    let namaGlobal = "";
+    let kelasGlobal = "";
+    let paslonTerpilih = "";
+
+    // --- 1. DARK MODE TOGGLE SWITCH ---
     if (localStorage.getItem("theme") === "dark") {
         document.documentElement.setAttribute("data-theme", "dark");
-        darkModeToggle.textContent = "☀️ Light Mode";
+        toggleSwitch.checked = true;
+        themeLabel.textContent = "☀️";
     }
 
-    darkModeToggle.addEventListener("click", function () {
-        if (document.documentElement.getAttribute("data-theme") === "dark") {
-            document.documentElement.removeAttribute("data-theme");
-            localStorage.setItem("theme", "light");
-            darkModeToggle.textContent = "🌙 Dark Mode";
-        } else {
+    toggleSwitch.addEventListener("change", function () {
+        if (this.checked) {
             document.documentElement.setAttribute("data-theme", "dark");
             localStorage.setItem("theme", "dark");
-            darkModeToggle.textContent = "☀️ Light Mode";
+            themeLabel.textContent = "☀️";
+        } else {
+            document.documentElement.removeAttribute("data-theme");
+            localStorage.setItem("theme", "light");
+            themeLabel.textContent = "🌙";
         }
     });
 
-    // --- 2. NAVIGASI LANGKAH 1 -> LANGKAH 2 ---
-    let namaGlobal = "";
-    let kelasGlobal = "";
-
+    // --- 2. NAVIGASI STEP 1 -> STEP 2 ---
     nextBtn.addEventListener("click", function () {
         const namaInput = document.getElementById("nama").value.trim();
         const kelasInput = document.getElementById("kelas").value.trim();
@@ -51,11 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
         greetingNama.textContent = namaGlobal;
         greetingKelas.textContent = kelasGlobal;
 
-        // Berpindah tampilan
         step1.style.display = "none";
         step2.style.display = "block";
 
-        // Update indikator stepper
         stepIndicator1.classList.remove("active");
         stepIndicator2.classList.add("active");
     });
@@ -68,45 +76,52 @@ document.addEventListener("DOMContentLoaded", function () {
         stepIndicator1.classList.add("active");
     });
 
-    // --- 3. EKSEKUSI VOTING KE APPS SCRIPT ---
-    const voteButtons = document.querySelectorAll(".voteBtn");
+    // --- 3. POP-UP MODAL KONFIRMASI ---
+    const openModalBtns = document.querySelectorAll(".openModalBtn");
 
-    voteButtons.forEach(button => {
+    openModalBtns.forEach(button => {
         button.addEventListener("click", function () {
-            const selectedPaslon = this.getAttribute("data-paslon");
+            paslonTerpilih = this.getAttribute("data-paslon");
+            selectedPaslonText.textContent = paslonTerpilih;
+            confirmModal.style.display = "flex";
+        });
+    });
 
-            if (!confirm(`Konfirmasi Pilihan:\nApakah Anda yakin ingin memilih ${selectedPaslon}?`)) {
-                return;
-            }
+    cancelModalBtn.addEventListener("click", function () {
+        confirmModal.style.display = "none";
+    });
 
-            // Nonaktifkan tombol saat mengirim data
-            voteButtons.forEach(btn => btn.disabled = true);
-            this.textContent = "Mengirim Suara...";
+    // --- 4. KIRIM DATA KE GOOGLE APPS SCRIPT ---
+    confirmVoteBtn.addEventListener("click", function () {
+        confirmVoteBtn.disabled = true;
+        cancelModalBtn.disabled = true;
+        confirmVoteBtn.textContent = "Mengirim...";
 
-            const payload = {
-                nama: namaGlobal,
-                kelas: kelasGlobal,
-                paslon: selectedPaslon
-            };
+        const payload = {
+            nama: namaGlobal,
+            kelas: kelasGlobal,
+            paslon: paslonTerpilih
+        };
 
-            fetch(WEB_APP_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8",
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(() => {
-                alert("Terima kasih! Suara Anda telah berhasil dicatat.");
-                location.reload();
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Gagal mengirim suara. Periksa koneksi internet Anda.");
-                voteButtons.forEach(btn => btn.disabled = false);
-                this.textContent = `Pilih ${selectedPaslon}`;
-            });
+        fetch(WEB_APP_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            alert(`Terima kasih! Suara Anda untuk ${paslonTerpilih} telah berhasil dicatat.`);
+            location.reload();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Gagal mengirim suara. Periksa koneksi internet Anda.");
+            confirmVoteBtn.disabled = false;
+            cancelModalBtn.disabled = false;
+            confirmVoteBtn.textContent = "Ya, Kirim Suara";
+            confirmModal.style.display = "none";
         });
     });
 });

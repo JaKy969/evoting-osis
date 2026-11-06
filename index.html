@@ -9,13 +9,19 @@
 <body>
 
     <div class="main-card">
-        <!-- Header & Dark Mode Toggle -->
+        <!-- Header & Switch Dark Mode -->
         <div class="card-header">
             <h2>E-Voting OSIS</h2>
-            <button id="darkModeToggle" class="theme-toggle-btn">🌙 Dark Mode</button>
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider round"></div>
+                </label>
+                <span id="theme-label">🌙</span>
+            </div>
         </div>
 
-        <!-- Progress Indicator -->
+        <!-- Stepper Indicator -->
         <div class="stepper">
             <div class="step step-1 active" id="stepIndicator1">
                 <span class="step-number">1</span>
@@ -54,23 +60,40 @@
                 <!-- Paslon 1 -->
                 <div class="paslon-card">
                     <div class="paslon-badge">01</div>
-                    <div class="paslon-avatar">🗳️</div>
+                    <div class="paslon-img-container">
+                        <img src="paslon1.jpg" alt="Foto Paslon 1" class="paslon-img" onerror="this.src='https://via.placeholder.com/150?text=Paslon+1'">
+                    </div>
                     <h3>Paslon 1</h3>
                     <p class="paslon-slogan">"Mewujudkan OSIS yang Kreatif, Inovatif, dan Berkarakter"</p>
-                    <button type="button" class="btn btn-vote voteBtn" data-paslon="Paslon 1">Pilih Paslon 1</button>
+                    <button type="button" class="btn btn-vote openModalBtn" data-paslon="Paslon 1">Pilih Paslon 1</button>
                 </div>
 
                 <!-- Paslon 2 -->
                 <div class="paslon-card">
                     <div class="paslon-badge">02</div>
-                    <div class="paslon-avatar">🗳️</div>
+                    <div class="paslon-img-container">
+                        <img src="paslon2.jpg" alt="Foto Paslon 2" class="paslon-img" onerror="this.src='https://via.placeholder.com/150?text=Paslon+2'">
+                    </div>
                     <h3>Paslon 2</h3>
                     <p class="paslon-slogan">"Bersama Membangun Sekolah Unggul, Disiplin, dan Berprestasi"</p>
-                    <button type="button" class="btn btn-vote voteBtn" data-paslon="Paslon 2">Pilih Paslon 2</button>
+                    <button type="button" class="btn btn-vote openModalBtn" data-paslon="Paslon 2">Pilih Paslon 2</button>
                 </div>
             </div>
 
             <button type="button" id="backBtn" class="btn btn-secondary">&larr; Kembali ke Identitas</button>
+        </div>
+    </div>
+
+    <!-- POP-UP MODAL KONFIRMASI PEMILIHAN -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>Konfirmasi Pilihan</h3>
+            <p>Apakah Anda yakin ingin memilih <strong id="selectedPaslonText">Paslon</strong>?</p>
+            <p class="modal-subtext">Pilihan Anda tidak dapat diubah kembali setelah dikirim.</p>
+            <div class="modal-actions">
+                <button id="cancelModalBtn" class="btn btn-cancel">Batal</button>
+                <button id="confirmVoteBtn" class="btn btn-primary">Ya, Kirim Suara</button>
+            </div>
         </div>
     </div>
 
