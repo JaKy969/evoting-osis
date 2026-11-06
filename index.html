@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Voting Pemilihan Ketua OSIS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- TOMBOL SWITCH DARK / LIGHT MODE -->
+    <div class="theme-switch-wrapper">
+        <span class="theme-icon" id="theme-icon">🌙</span>
+        <label class="theme-switch" for="checkbox-theme">
+            <input type="checkbox" id="checkbox-theme" onchange="toggleTheme()" />
+            <div class="slider round"></div>
+        </label>
+    </div>
+
+    <div class="container">
+        <!-- TAHAP 1: FORM LOGIN / IDENTITAS -->
+        <div id="login-section" class="card">
+            <h2>Pemilihan Ketua OSIS</h2>
+            <p class="subtitle">Silakan masukkan identitas Anda sebelum melakukan voting.</p>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="nama">Nama Lengkap</label>
+                    <input type="text" id="nama" placeholder="Contoh: Budi Santoso" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="kelas">Kelas</label>
+                    <input type="text" id="kelas" placeholder="Contoh: XI-4" required autocomplete="off">
+                </div>
+                <button type="submit" class="btn-primary">Masuk untuk Voting</button>
+            </form>
+            <div id="login-message" class="error-msg"></div>
+        </div>
+
+        <!-- TAHAP 2: HALAMAN VOTING PASLON -->
+        <div id="voting-section" class="card hidden">
+            <h2>Pilih Kandidat Ketua OSIS</h2>
+            <p class="subtitle">Halo, <span id="user-display"></span> (<span id="class-display"></span>). Pilih salah satu paslon di bawah ini:</p>
+            
+            <div class="paslon-container">
+                <!-- Paslon 1 -->
+                <div class="paslon-card">
+                    <img src="paslon1.jpg" alt="Paslon 1" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Foto+Paslon+1';">
+                    <h3>Paslon 01</h3>
+                    <p class="slogan">"Mewujudkan OSIS yang Kreatif, Inovatif, dan Berkarakter."</p>
+                    <button type="button" class="btn-vote" onclick="openConfirmModal('Paslon 1')">Pilih Paslon 1</button>
+                </div>
+
+                <!-- Paslon 2 -->
+                <div class="paslon-card">
+                    <img src="paslon2.jpg" alt="Paslon 2" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Foto+Paslon+2';">
+                    <h3>Paslon 02</h3>
+                    <p class="slogan">"Bersama Kita Bisa: Solid, Aspiratif, dan Solutif."</p>
+                    <button type="button" class="btn-vote" onclick="openConfirmModal('Paslon 2')">Pilih Paslon 2</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAHAP 3: HALAMAN SUKSES -->
+        <div id="success-section" class="card hidden text-center">
+            <h2>Terima Kasih! 🎉</h2>
+            <p class="subtitle">Suara Anda telah berhasil direkam ke dalam database.</p>
+            <p class="info-box">Anda telah berpartisipasi dalam pemilihan ini. Jendela ini sekarang dapat ditutup.</p>
+        </div>
+    </div>
+
+    <!-- POP-UP KONFIRMASI -->
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Konfirmasi Pilihan</h3>
+            <p>Apakah Anda yakin dengan keputusan memilih <span id="selected-paslon-text" style="font-weight: bold; color: var(--accent-red);"></span>?</p>
+            <p class="warning-text">Pilihan tidak dapat diubah setelah dikonfirmasi.</p>
+            <div class="modal-buttons">
+                <button type="button" class="btn-secondary" onclick="closeConfirmModal()">Batal</button>
+                <button type="button" class="btn-primary" onclick="submitVote()">Ya, Yakin</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
