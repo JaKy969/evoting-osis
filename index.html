@@ -38,68 +38,90 @@
         <div id="step1" class="step-content">
             <div class="form-group">
                 <label for="nama">Nama Lengkap</label>
-                <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda" autocomplete="off" required>
+                <input type="text" id="nama" placeholder="Masukkan Nama Lengkap Anda" autocomplete="off" required>
             </div>
 
             <div class="form-group">
                 <label for="kelas">Kelas</label>
-                <input type="text" id="kelas" placeholder="Contoh: XI IPA 2" autocomplete="off" required>
+                <select id="kelas" required>
+                    <option value="" disabled selected>Status</option>
+                    <option value="X-1">X-1</option>
+                    <option value="X-2">X-2</option>
+                    <option value="X-3">X-3</option>
+                    <option value="X-4">X-4</option>
+                    <option value="XI-1">XI-1</option>
+                    <option value="XI-2">XI-2</option>
+                    <option value="XI-3">XI-3</option>
+                    <option value="XI-4">XI-4</option>
+                    <option value="XII-1">XII-1</option>
+                    <option value="XII-2">XII-2</option>
+                    <option value="XII-3">XII-3</option>
+                    <option value="XII-4">XII-4</option>
+                    <option value="Staff">Staff</option>
+                    <option value="Guru">Guru</option>
+                </select>
             </div>
 
             <button type="button" id="nextBtn" class="btn btn-primary">Lanjut ke Pemilihan &rarr;</button>
         </div>
 
-        <!-- LANGKAH 2: PILIHAN PASLON -->
+        <!-- LANGKAH 2: SLIDER / CAROUSEL 5 PASLON -->
         <div id="step2" class="step-content" style="display: none;">
             <div class="user-greeting">
                 <p>Halo, <strong id="greetingNama">...</strong> (<span id="greetingKelas">...</span>)</p>
-                <small>Silakan tentukan pilihan pasangan calon pilihan Anda:</small>
+                <small>Geser untuk melihat dan memilih kandidat:</small>
             </div>
 
-            <div class="paslon-grid">
-                <!-- Paslon 1 -->
-                <div class="paslon-card">
-                    <div class="paslon-badge">01</div>
-                    <div class="paslon-img-container">
-                        <img src="paslon1.jpg" alt="Foto Paslon 1" class="paslon-img" onerror="this.src='https://via.placeholder.com/300x180?text=Paslon+1'">
-                    </div>
-                    <h3>Paslon 1</h3>
-                    <p class="paslon-slogan">"Mewujudkan OSIS yang Kreatif, Inovatif, dan Berkarakter"</p>
-                    <button type="button" class="btn btn-vote openModalBtn" data-paslon="Paslon 1">Pilih Paslon 1</button>
+            <!-- Slider Container -->
+            <div class="carousel-container">
+                <button type="button" id="prevSlide" class="carousel-nav-btn">&larr;</button>
+                
+                <div class="carousel-track-container">
+                    <div class="carousel-track" id="carouselTrack"></div>
                 </div>
 
-                <!-- Paslon 2 -->
-                <div class="paslon-card">
-                    <div class="paslon-badge">02</div>
-                    <div class="paslon-img-container">
-                        <img src="paslon2.jpg" alt="Foto Paslon 2" class="paslon-img" onerror="this.src='https://via.placeholder.com/300x180?text=Paslon+2'">
-                    </div>
-                    <h3>Paslon 2</h3>
-                    <p class="paslon-slogan">"Bersama Membangun Sekolah Unggul, Disiplin, dan Berprestasi"</p>
-                    <button type="button" class="btn btn-vote openModalBtn" data-paslon="Paslon 2">Pilih Paslon 2</button>
-                </div>
+                <button type="button" id="nextSlide" class="carousel-nav-btn">&rarr;</button>
             </div>
 
-            <button type="button" id="backBtn" class="btn btn-secondary">&larr; Kembali ke Identitas</button>
+            <div class="carousel-indicators" id="carouselIndicators"></div>
         </div>
     </div>
 
-    <!-- POP-UP MODAL KONFIRMASI PEMILIHAN -->
+    <!-- POP-UP MODAL INFO (VISI MISI SCROLLABLE) -->
+    <div id="infoModal" class="modal">
+        <div class="modal-content scrollable-modal animated-popup">
+            <button type="button" class="close-modal-btn" id="closeInfoModal">&times;</button>
+            <div class="modal-img-container">
+                <img id="modalPaslonImg" src="" alt="Paslon" class="paslon-img">
+            </div>
+            <h3 id="modalPaslonNama">Nama Paslon</h3>
+            <p id="modalPaslonSlogan" class="modal-slogan">Slogan</p>
+            <hr class="modal-divider">
+            <div class="visi-misi-section">
+                <h4>Visi:</h4>
+                <p id="modalVisi">Memuat visi...</p>
+                <h4>Misi:</h4>
+                <p id="modalMisi">Memuat misi...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- POP-UP MODAL KONFIRMASI PEMILIHAN (DENGAN TIMER 5 DETIK) -->
     <div id="confirmModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content animated-popup">
             <h3>Konfirmasi Pilihan</h3>
             <p>Apakah Anda yakin ingin memilih <strong id="selectedPaslonText">Paslon</strong>?</p>
             <p class="modal-subtext">Pilihan Anda tidak dapat diubah kembali setelah dikirim.</p>
             <div class="modal-actions">
                 <button id="cancelModalBtn" class="btn btn-cancel">Batal</button>
-                <button id="confirmVoteBtn" class="btn btn-primary">Ya, Kirim Suara</button>
+                <button id="confirmVoteBtn" class="btn btn-primary" disabled>Tunggu (<span id="countdownTimer">5</span>s)</button>
             </div>
         </div>
     </div>
 
     <!-- POP-UP MODAL TERIMA KASIH -->
     <div id="successModal" class="modal">
-        <div class="modal-content success-box">
+        <div class="modal-content success-box animated-popup">
             <div class="success-icon">🎉</div>
             <h3>Terima Kasih!</h3>
             <p>Suara Anda berhasil direkam dalam sistem e-voting.</p>

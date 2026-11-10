@@ -5,26 +5,154 @@ document.addEventListener("DOMContentLoaded", function () {
     const stepIndicator2 = document.getElementById("stepIndicator2");
     
     const nextBtn = document.getElementById("nextBtn");
-    const backBtn = document.getElementById("backBtn");
     const greetingNama = document.getElementById("greetingNama");
     const greetingKelas = document.getElementById("greetingKelas");
 
     const toggleSwitch = document.getElementById("checkbox");
     const themeLabel = document.getElementById("theme-label");
 
-    // Modal Konfirmasi & Modal Sukses
+    // Carousel Elemen
+    const carouselTrack = document.getElementById("carouselTrack");
+    const prevSlideBtn = document.getElementById("prevSlide");
+    const nextSlideBtn = document.getElementById("nextSlide");
+    const carouselIndicators = document.getElementById("carouselIndicators");
+
+    // Modal Elemen
+    const infoModal = document.getElementById("infoModal");
+    const closeInfoModal = document.getElementById("closeInfoModal");
+    const modalPaslonImg = document.getElementById("modalPaslonImg");
+    const modalPaslonNama = document.getElementById("modalPaslonNama");
+    const modalPaslonSlogan = document.getElementById("modalPaslonSlogan");
+    const modalVisi = document.getElementById("modalVisi");
+    const modalMisi = document.getElementById("modalMisi");
+
     const confirmModal = document.getElementById("confirmModal");
     const successModal = document.getElementById("successModal");
     const selectedPaslonText = document.getElementById("selectedPaslonText");
     const cancelModalBtn = document.getElementById("cancelModalBtn");
     const confirmVoteBtn = document.getElementById("confirmVoteBtn");
+    const countdownTimer = document.getElementById("countdownTimer");
 
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJDAWvXCG9_J8LMlJZEkHHusS1Y10NE_AUIIIEUzq14gpBNZ2wYIJdx5AJoDPDQHAK/exec";
+
+    // Data 5 Paslon Lengkap
+    const paslonData = [
+        {
+            id: "Paslon 1",
+            nomor: "01",
+            nama: "Susilo Bambang Yudhoyono & Prabowo Subianto",
+            slogan: "Mewujudkan OSIS yang Kreatif, Inovatif, dan Berkarakter",
+            img: "paslon1.jpg",
+            visi: "Menjadikan OSIS sebagai wadah aspirasi siswa yang progresif dan berakhlak mulia demi terciptanya lingkungan belajar yang kondusif.",
+            misi: "1. Mengoptimalkan program kerja ekstrakurikuler sekolah secara berkala.\n2. Meningkatkan kedisiplinan dan solidaritas antar siswa dari setiap angkatan.\n3. Mengadakan event seni, olahraga, dan sains tahunan berskala regional."
+        },
+        {
+            id: "Paslon 2",
+            nomor: "02",
+            nama: "Anies Baswedan & Ganjar Pranowo",
+            slogan: "Bersama Membangun Sekolah Unggul, Disiplin, dan Berprestasi",
+            img: "paslon2.jpg",
+            visi: "Mewujudkan sekolah ramah anak, berprestasi tinggi di bidang akademik maupun non-akademik di tingkat nasional.",
+            misi: "1. Membuka transparansi dana kegiatan siswa secara akuntabel.\n2. Menyediakan fasilitas penunjang bakat digital dan kreativitas siswa.\n3. Menggalakkan gerakan peduli lingkungan dan kebersihan sekolah."
+        },
+        {
+            id: "Paslon 3",
+            nomor: "03",
+            nama: "Bacharuddin Jusuf & Sri Mulyani",
+            slogan: "Inovasi Teknologi dan Manajemen Keuangan Siswa yang Mandiri",
+            img: "paslon3.jpg",
+            visi: "Menciptakan ekosistem sekolah berbasis teknologi modern dan kemandirian finansial organisasi siswa.",
+            misi: "1. Digitalisasi seluruh administrasi, informasi, dan absensi OSIS.\n2. Pelatihan kewirausahaan digital dan manajemen keuangan untuk siswa.\n3. Optimalisasi koperasi siswa berbasis sistem pembayaran digital."
+        },
+        {
+            id: "Paslon 4",
+            nomor: "04",
+            nama: "Ki Hadjar Dewantara & Raden Ajeng",
+            slogan: "Melestarikan Budaya Bangsa dengan Semangat Kekeluargaan",
+            img: "paslon4.jpg",
+            visi: "Membangun karakter siswa yang menjunjung tinggi nilai-nilai budaya nusantara dan prinsip gotong royong.",
+            misi: "1. Mengadakan pekan budaya nusantara dan festival seni tiap semester.\n2. Program pendampingan akademik sebaya untuk siswa yang membutuhkan.\n3. Peningkatan sarana dan prasarana literasi perpustakaan sekolah."
+        },
+        {
+            id: "Paslon 5",
+            nomor: "05",
+            nama: "Soekarno & Mohammad Hatta",
+            slogan: "Menjalin Persatuan dan Kedaulatan Siswa Berlandaskan Pancasila",
+            img: "paslon5.jpg",
+            visi: "Menjaga keutuhan, keaktifan, serta keharmonisan seluruh perwakilan kelas di bawah kepemimpinan OSIS.",
+            misi: "1. Musyawarah perwakilan kelas rutin tiap bulan untuk menampung ide siswa.\n2. Mengadakan Porseni antar kelas secara sportif dan kompetitif.\n3. Penguatan pelatihan kepemimpinan dan jiwa nasionalisme siswa."
+        }
+    ];
+
     let namaGlobal = "";
     let kelasGlobal = "";
     let paslonTerpilih = "";
+    let currentSlide = 0;
+    let countdownInterval = null;
 
-    // --- 1. DARK MODE TOGGLE SWITCH ---
+    // --- FUNGSI MENGUBAH TEKS MENJADI FORMAT TITLE CASE ---
+    function toTitleCase(str) {
+        return str
+            .toLowerCase()
+            .split(" ")
+            .filter(word => word.length > 0)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+    }
+
+    // --- RENDER CAROUSEL PASLON ---
+    function renderCarousel() {
+        carouselTrack.innerHTML = "";
+        carouselIndicators.innerHTML = "";
+
+        paslonData.forEach((paslon, index) => {
+            const card = document.createElement("div");
+            card.className = "paslon-card";
+            card.innerHTML = `
+                <div class="paslon-badge">${paslon.nomor}</div>
+                <div class="paslon-img-container">
+                    <img src="${paslon.img}" alt="${paslon.id}" class="paslon-img" onerror="this.src='https://via.placeholder.com/300x160?text=${paslon.id}'">
+                </div>
+                <h3>${paslon.nama}</h3>
+                <button type="button" class="btn btn-info openInfoBtn" data-index="${index}">Lihat Info & Visi Misi</button>
+                <button type="button" class="btn btn-vote openModalBtn" data-paslon="${paslon.id}">Pilih ${paslon.id}</button>
+            `;
+            carouselTrack.appendChild(card);
+
+            const dot = document.createElement("div");
+            dot.className = `indicator-dot ${index === 0 ? "active" : ""}`;
+            dot.addEventListener("click", () => goToSlide(index));
+            carouselIndicators.appendChild(dot);
+        });
+
+        updateSlidePosition();
+        attachPaslonEventListeners();
+    }
+
+    function updateSlidePosition() {
+        carouselTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+        const dots = document.querySelectorAll(".indicator-dot");
+        dots.forEach((dot, idx) => {
+            dot.classList.toggle("active", idx === currentSlide);
+        });
+    }
+
+    function goToSlide(index) {
+        currentSlide = index;
+        updateSlidePosition();
+    }
+
+    prevSlideBtn.addEventListener("click", () => {
+        currentSlide = (currentSlide === 0) ? paslonData.length - 1 : currentSlide - 1;
+        updateSlidePosition();
+    });
+
+    nextSlideBtn.addEventListener("click", () => {
+        currentSlide = (currentSlide === paslonData.length - 1) ? 0 : currentSlide + 1;
+        updateSlidePosition();
+    });
+
+    // --- DARK MODE TOGGLE SWITCH ---
     if (localStorage.getItem("theme") === "dark") {
         document.documentElement.setAttribute("data-theme", "dark");
         toggleSwitch.checked = true;
@@ -43,57 +171,143 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // --- 2. NAVIGASI STEP 1 -> STEP 2 ---
+    // --- CEK NAMA KE DATABASE DENGAN FORMAT TITLE CASE & SKELETON SCREEN ---
     nextBtn.addEventListener("click", function () {
-        const namaInput = document.getElementById("nama").value.trim();
-        const kelasInput = document.getElementById("kelas").value.trim();
+        const rawNama = document.getElementById("nama").value.trim();
+        const kelasInput = document.getElementById("kelas").value;
 
-        if (!namaInput || !kelasInput) {
-            alert("Mohon lengkapi Nama dan Kelas terlebih dahulu!");
+        if (!rawNama || !kelasInput) {
+            alert("Mohon lengkapi Nama Lengkap dan pilih Status!");
             return;
         }
 
-        namaGlobal = namaInput;
-        kelasGlobal = kelasInput;
+        // Konversi otomatis nama menjadi Title Case (misal: "jAKY" -> "Jaky")
+        const formattedNama = toTitleCase(rawNama);
+        document.getElementById("nama").value = formattedNama; // Tampilkan nama yang sudah rapi di kolom input
 
-        greetingNama.textContent = namaGlobal;
-        greetingKelas.textContent = kelasGlobal;
+        const inputNamaField = document.getElementById("nama");
+        const inputKelasField = document.getElementById("kelas");
+        inputNamaField.classList.add("skeleton-box");
+        inputKelasField.classList.add("skeleton-box");
 
-        step1.style.display = "none";
-        step2.style.display = "block";
+        nextBtn.disabled = true;
+        nextBtn.textContent = "Memeriksa Database...";
 
-        stepIndicator1.classList.remove("active");
-        stepIndicator2.classList.add("active");
+        const checkUrl = `${WEB_APP_URL}?action=checkName&nama=${encodeURIComponent(formattedNama)}`;
+
+        fetch(checkUrl)
+            .then(response => response.json())
+            .then(data => {
+                inputNamaField.classList.remove("skeleton-box");
+                inputKelasField.classList.remove("skeleton-box");
+                nextBtn.disabled = false;
+                nextBtn.textContent = "Lanjut ke Pemilihan →";
+
+                if (data.status === "blocked") {
+                    alert(`Maaf, nama "${formattedNama}" sudah terdaftar di database dan telah melakukan voting!`);
+                    return;
+                }
+
+                const lastVotedName = localStorage.getItem("votedName");
+                if (lastVotedName && lastVotedName.toLowerCase() === formattedNama.toLowerCase()) {
+                    localStorage.removeItem("votedName");
+                    localStorage.removeItem("hasVoted");
+                }
+
+                namaGlobal = formattedNama;
+                kelasGlobal = kelasInput;
+
+                greetingNama.textContent = namaGlobal;
+                greetingKelas.textContent = kelasGlobal;
+
+                step1.style.display = "none";
+                step2.style.display = "block";
+
+                stepIndicator1.classList.remove("active");
+                stepIndicator2.classList.add("active");
+
+                renderCarousel();
+            })
+            .catch(error => {
+                console.error("Error checking name:", error);
+                inputNamaField.classList.remove("skeleton-box");
+                inputKelasField.classList.remove("skeleton-box");
+                nextBtn.disabled = false;
+                nextBtn.textContent = "Lanjut ke Pemilihan →";
+
+                namaGlobal = formattedNama;
+                kelasGlobal = kelasInput;
+
+                greetingNama.textContent = namaGlobal;
+                greetingKelas.textContent = kelasGlobal;
+
+                step1.style.display = "none";
+                step2.style.display = "block";
+
+                stepIndicator1.classList.remove("active");
+                stepIndicator2.classList.add("active");
+
+                renderCarousel();
+            });
     });
 
-    backBtn.addEventListener("click", function () {
-        step2.style.display = "none";
-        step1.style.display = "block";
+    function attachPaslonEventListeners() {
+        document.querySelectorAll(".openInfoBtn").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const index = this.getAttribute("data-index");
+                const paslon = paslonData[index];
 
-        stepIndicator2.classList.remove("active");
-        stepIndicator1.classList.add("active");
-    });
+                modalPaslonImg.src = paslon.img;
+                modalPaslonNama.textContent = paslon.nama;
+                modalPaslonSlogan.textContent = `"${paslon.slogan}"`;
+                modalVisi.textContent = paslon.visi;
+                modalMisi.innerHTML = paslon.misi.replace(/\n/g, "<br>");
 
-    // --- 3. POP-UP MODAL KONFIRMASI ---
-    const openModalBtns = document.querySelectorAll(".openModalBtn");
-
-    openModalBtns.forEach(button => {
-        button.addEventListener("click", function () {
-            paslonTerpilih = this.getAttribute("data-paslon");
-            selectedPaslonText.textContent = paslonTerpilih;
-            confirmModal.style.display = "flex";
+                infoModal.style.display = "flex";
+            });
         });
-    });
 
-    cancelModalBtn.addEventListener("click", function () {
+        document.querySelectorAll(".openModalBtn").forEach(btn => {
+            btn.addEventListener("click", function () {
+                paslonTerpilih = this.getAttribute("data-paslon");
+                selectedPaslonText.textContent = paslonTerpilih;
+                
+                confirmModal.style.display = "flex";
+
+                let timeLeft = 5;
+                confirmVoteBtn.disabled = true;
+                confirmVoteBtn.textContent = `Tunggu (${timeLeft}s)`;
+                countdownTimer.textContent = timeLeft;
+
+                if (countdownInterval) clearInterval(countdownInterval);
+
+                countdownInterval = setInterval(() => {
+                    timeLeft--;
+                    countdownTimer.textContent = timeLeft;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        confirmVoteBtn.disabled = false;
+                        confirmVoteBtn.textContent = "Ya, Kirim Suara";
+                    }
+                }, 1000);
+            });
+        });
+    }
+
+    closeInfoModal.addEventListener("click", () => infoModal.style.display = "none");
+    
+    cancelModalBtn.addEventListener("click", () => {
+        if (countdownInterval) clearInterval(countdownInterval);
         confirmModal.style.display = "none";
     });
 
-    // --- 4. KIRIM DATA KE GOOGLE APPS SCRIPT & MUNCULKAN POP-UP TERIMA KASIH ---
+    // --- KIRIM SUARA KE GOOGLE SHEETS DENGAN EFEK BOUNCING DOTS ---
     confirmVoteBtn.addEventListener("click", function () {
         confirmVoteBtn.disabled = true;
         cancelModalBtn.disabled = true;
-        confirmVoteBtn.textContent = "Mengirim...";
+        
+        confirmVoteBtn.innerHTML = `Mengirim <span class="bouncing-dots"><span></span><span></span><span></span></span>`;
 
         const payload = {
             nama: namaGlobal,
@@ -104,24 +318,19 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(WEB_APP_URL, {
             method: "POST",
             mode: "no-cors",
-            headers: {
-                "Content-Type": "text/plain;charset=utf-8",
-            },
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(payload)
         })
         .then(() => {
-            // Sembunyikan modal konfirmasi, tampilkan modal sukses (terima kasih)
+            localStorage.setItem("hasVoted", "true");
+            localStorage.setItem("votedName", namaGlobal);
+
             confirmModal.style.display = "none";
             successModal.style.display = "flex";
-
-            // Tunggu 2 detik, lalu refresh halaman otomatis
-            setTimeout(() => {
-                location.reload();
-            }, 2000);
         })
         .catch(error => {
             console.error("Error:", error);
-            alert("Gagal mengirim suara. Periksa koneksi internet Anda.");
+            alert("Gagal mengirim suara. Periksa koneksi internet.");
             confirmVoteBtn.disabled = false;
             cancelModalBtn.disabled = false;
             confirmVoteBtn.textContent = "Ya, Kirim Suara";
