@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJDAWvXCG9_J8LMlJZEkHHusS1Y10NE_AUIIIEUzq14gpBNZ2wYIJdx5AJoDPDQHAK/exec";
 
-    // Data 5 Paslon Lengkap
     const paslonData = [
         {
             id: "Paslon 1",
@@ -90,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSlide = 0;
     let countdownInterval = null;
 
-    // --- FUNGSI MENGUBAH TEKS MENJADI FORMAT TITLE CASE ---
     function toTitleCase(str) {
         return str
             .toLowerCase()
@@ -100,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .join(" ");
     }
 
-    // --- RENDER CAROUSEL PASLON ---
     function renderCarousel() {
         carouselTrack.innerHTML = "";
         carouselIndicators.innerHTML = "";
@@ -152,7 +149,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateSlidePosition();
     });
 
-    // --- DARK MODE TOGGLE SWITCH ---
     if (localStorage.getItem("theme") === "dark") {
         document.documentElement.setAttribute("data-theme", "dark");
         toggleSwitch.checked = true;
@@ -171,7 +167,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // --- CEK NAMA KE DATABASE DENGAN FORMAT TITLE CASE & SKELETON SCREEN ---
     nextBtn.addEventListener("click", function () {
         const rawNama = document.getElementById("nama").value.trim();
         const kelasInput = document.getElementById("kelas").value;
@@ -181,9 +176,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Konversi otomatis nama menjadi Title Case (misal: "jAKY" -> "Jaky")
         const formattedNama = toTitleCase(rawNama);
-        document.getElementById("nama").value = formattedNama; // Tampilkan nama yang sudah rapi di kolom input
+        document.getElementById("nama").value = formattedNama;
 
         const inputNamaField = document.getElementById("nama");
         const inputKelasField = document.getElementById("kelas");
@@ -274,16 +268,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 
                 confirmModal.style.display = "flex";
 
+                // PERBAIKAN TIMER 5 DETIK YANG STABIL
+                if (countdownInterval) clearInterval(countdownInterval);
+
                 let timeLeft = 5;
                 confirmVoteBtn.disabled = true;
-                confirmVoteBtn.textContent = `Tunggu (${timeLeft}s)`;
-                countdownTimer.textContent = timeLeft;
-
-                if (countdownInterval) clearInterval(countdownInterval);
+                confirmVoteBtn.innerHTML = `Tunggu (<span id="countdownTimer">${timeLeft}s</span>)`;
 
                 countdownInterval = setInterval(() => {
                     timeLeft--;
-                    countdownTimer.textContent = timeLeft;
+                    const timerSpan = document.getElementById("countdownTimer");
+                    if (timerSpan) {
+                        timerSpan.textContent = `${timeLeft}s`;
+                    }
 
                     if (timeLeft <= 0) {
                         clearInterval(countdownInterval);
@@ -302,11 +299,14 @@ document.addEventListener("DOMContentLoaded", function () {
         confirmModal.style.display = "none";
     });
 
-    // --- KIRIM SUARA KE GOOGLE SHEETS DENGAN EFEK BOUNCING DOTS ---
+    // --- KIRIM SUARA KE GOOGLE SHEETS DENGAN BOUNCING DOTS YANG BENAR ---
     confirmVoteBtn.addEventListener("click", function () {
+        if (this.disabled) return;
+
         confirmVoteBtn.disabled = true;
         cancelModalBtn.disabled = true;
         
+        // Memastikan struktur HTML bouncing dots dirender sempurna
         confirmVoteBtn.innerHTML = `Mengirim <span class="bouncing-dots"><span></span><span></span><span></span></span>`;
 
         const payload = {

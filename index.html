@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Voting OSIS</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        #step2.hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -13,11 +18,11 @@
         <div class="card-header">
             <h2>E-Voting OSIS</h2>
             <div class="theme-switch-wrapper">
-                <label class="theme-switch" for="checkbox">
-                    <input type="checkbox" id="checkbox" />
+                <label class="theme-switch" for="checkbox" aria-label="Ganti tema">
+                    <input type="checkbox" id="checkbox" aria-label="Ganti tema" title="Ganti tema" />
                     <div class="slider round"></div>
                 </label>
-                <span id="theme-label">🌙</span>
+                <span id="theme-label" aria-label="Theme status">🌙</span>
             </div>
         </div>
 
@@ -66,7 +71,7 @@
         </div>
 
         <!-- LANGKAH 2: SLIDER / CAROUSEL 5 PASLON -->
-        <div id="step2" class="step-content" style="display: none;">
+        <div id="step2" class="step-content hidden">
             <div class="user-greeting">
                 <p>Halo, <strong id="greetingNama">...</strong> (<span id="greetingKelas">...</span>)</p>
                 <small>Geser untuk melihat dan memilih kandidat:</small>
