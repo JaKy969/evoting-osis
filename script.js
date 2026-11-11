@@ -1,23 +1,31 @@
 document.addEventListener("DOMContentLoaded", function () {
     const step1 = document.getElementById("step1");
     const step2 = document.getElementById("step2");
+    const step3 = document.getElementById("step3");
+    
     const stepIndicator1 = document.getElementById("stepIndicator1");
     const stepIndicator2 = document.getElementById("stepIndicator2");
+    const stepIndicator3 = document.getElementById("stepIndicator3");
     
-    const nextBtn = document.getElementById("nextBtn");
+    const nextToStep2Btn = document.getElementById("nextToStep2Btn");
+    const backToStep1Btn = document.getElementById("backToStep1Btn");
+    const nextToStep3Btn = document.getElementById("nextToStep3Btn");
+    
+    const kelasSelect = document.getElementById("kelas");
+    const pilihNamaSelect = document.getElementById("pilihNama");
+    const labelKelasTerpilih = document.getElementById("labelKelasTerpilih");
+    
     const greetingNama = document.getElementById("greetingNama");
     const greetingKelas = document.getElementById("greetingKelas");
 
     const toggleSwitch = document.getElementById("checkbox");
     const themeLabel = document.getElementById("theme-label");
 
-    // Carousel Elemen
     const carouselTrack = document.getElementById("carouselTrack");
     const prevSlideBtn = document.getElementById("prevSlide");
     const nextSlideBtn = document.getElementById("nextSlide");
     const carouselIndicators = document.getElementById("carouselIndicators");
 
-    // Modal Elemen
     const infoModal = document.getElementById("infoModal");
     const closeInfoModal = document.getElementById("closeInfoModal");
     const modalPaslonImg = document.getElementById("modalPaslonImg");
@@ -31,7 +39,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const selectedPaslonText = document.getElementById("selectedPaslonText");
     const cancelModalBtn = document.getElementById("cancelModalBtn");
     const confirmVoteBtn = document.getElementById("confirmVoteBtn");
-    const countdownTimer = document.getElementById("countdownTimer");
 
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyJDAWvXCG9_J8LMlJZEkHHusS1Y10NE_AUIIIEUzq14gpBNZ2wYIJdx5AJoDPDQHAK/exec";
 
@@ -89,14 +96,134 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSlide = 0;
     let countdownInterval = null;
 
-    function toTitleCase(str) {
-        return str
-            .toLowerCase()
-            .split(" ")
-            .filter(word => word.length > 0)
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
+    // --- MEMUAT KELAS DENGAN ANIMASI BOUNCING DOTS ---
+    function loadKelasList() {
+        kelasSelect.innerHTML = `<option value="" disabled selected>Memuat Kelas <span class="bouncing-dots"><span></span><span></span><span></span></span></option>`;
+        
+        fetch(`${WEB_APP_URL}?action=getKelasList`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success" && data.kelas.length > 0) {
+                    kelasSelect.innerHTML = `<option value="" disabled selected>Pilih Status</option>`;
+                    data.kelas.forEach(kls => {
+                        const opt = document.createElement("option");
+                        opt.value = kls;
+                        opt.textContent = kls;
+                        kelasSelect.appendChild(opt);
+                    });
+                } else {
+                    kelasSelect.innerHTML = `<option value="" disabled selected>Tidak ada data kelas</option>`;
+                }
+            })
+            .catch(err => {
+                console.error("Gagal memuat list kelas:", err);
+                kelasSelect.innerHTML = `<option value="" disabled selected>Gagal memuat dari server</option>`;
+            });
     }
+    loadKelasList();
+
+    if (localStorage.getItem("theme") === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+        toggleSwitch.checked = true;
+        themeLabel.textContent = "☀️";
+    }
+
+    toggleSwitch.addEventListener("change", function () {
+        if (this.checked) {
+            document.documentElement.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+            themeLabel.textContent = "☀️";
+        } else {
+            document.documentElement.removeAttribute("data-theme");
+            localStorage.setItem("theme", "light");
+            themeLabel.textContent = "🌙";
+        }
+    });
+
+    nextToStep2Btn.addEventListener("click", function () {
+        const kelasPilihan = kelasSelect.value;
+        if (!kelasPilihan) {
+            alert("Silakan pilih Status / Kelas terlebih dahulu!");
+            return;
+        }
+
+        kelasGlobal = kelasPilihan;
+        labelKelasTerpilih.textContent = kelasGlobal;
+
+        nextToStep2Btn.disabled = true;
+        nextToStep2Btn.innerHTML = `Memuat Nama <span class="bouncing-dots"><span></span><span></span><span></span></span>`;
+        kelasSelect.classList.add("skeleton-box");
+
+        const url = `${WEB_APP_URL}?action=getSiswaByKelas&kelas=${encodeURIComponent(kelasGlobal)}`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                nextToStep2Btn.disabled = false;
+                nextToStep2Btn.textContent = "Lanjut Pilih Nama →";
+                kelasSelect.classList.remove("skeleton-box");
+
+                if (data.status === "success") {
+                    const listSiswa = data.siswa;
+                    pilihNamaSelect.innerHTML = `<option value="" disabled selected>Pilih Nama Anda</option>`;
+
+                    if (listSiswa.length === 0) {
+                        pilihNamaSelect.innerHTML = `<option value="" disabled selected>Tidak ada data siswa di kelas ini</option>`;
+                        return;
+                    }
+
+                    listSiswa.forEach(item => {
+                        const opt = document.createElement("option");
+                        opt.value = item.nama;
+                        opt.textContent = item.nama;
+                        if (item.sudahVote) {
+                            opt.disabled = true;
+                        }
+                        pilihNamaSelect.appendChild(opt);
+                    });
+
+                    step1.style.display = "none";
+                    step2.style.display = "block";
+                    stepIndicator1.classList.remove("active");
+                    stepIndicator2.classList.add("active");
+                } else {
+                    alert("Gagal memuat daftar nama siswa.");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                nextToStep2Btn.disabled = false;
+                nextToStep2Btn.textContent = "Lanjut Pilih Nama →";
+                kelasSelect.classList.remove("skeleton-box");
+                alert("Kesalahan jaringan saat mengambil data.");
+            });
+    });
+
+    backToStep1Btn.addEventListener("click", function () {
+        step2.style.display = "none";
+        step1.style.display = "block";
+        stepIndicator2.classList.remove("active");
+        stepIndicator1.classList.add("active");
+    });
+
+    nextToStep3Btn.addEventListener("click", function () {
+        const namaPilihan = pilihNamaSelect.value;
+        if (!namaPilihan) {
+            alert("Silakan pilih Nama Lengkap Anda dari daftar!");
+            return;
+        }
+
+        namaGlobal = namaPilihan;
+        greetingNama.textContent = namaGlobal;
+        greetingKelas.textContent = kelasGlobal;
+
+        step2.style.display = "none";
+        step3.style.display = "block";
+        stepIndicator2.classList.remove("active");
+        stepIndicator3.classList.add("active");
+
+        renderCarousel();
+    });
 
     function renderCarousel() {
         carouselTrack.innerHTML = "";
@@ -149,102 +276,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateSlidePosition();
     });
 
-    if (localStorage.getItem("theme") === "dark") {
-        document.documentElement.setAttribute("data-theme", "dark");
-        toggleSwitch.checked = true;
-        themeLabel.textContent = "☀️";
-    }
-
-    toggleSwitch.addEventListener("change", function () {
-        if (this.checked) {
-            document.documentElement.setAttribute("data-theme", "dark");
-            localStorage.setItem("theme", "dark");
-            themeLabel.textContent = "☀️";
-        } else {
-            document.documentElement.removeAttribute("data-theme");
-            localStorage.setItem("theme", "light");
-            themeLabel.textContent = "🌙";
-        }
-    });
-
-    nextBtn.addEventListener("click", function () {
-        const rawNama = document.getElementById("nama").value.trim();
-        const kelasInput = document.getElementById("kelas").value;
-
-        if (!rawNama || !kelasInput) {
-            alert("Mohon lengkapi Nama Lengkap dan pilih Status!");
-            return;
-        }
-
-        const formattedNama = toTitleCase(rawNama);
-        document.getElementById("nama").value = formattedNama;
-
-        const inputNamaField = document.getElementById("nama");
-        const inputKelasField = document.getElementById("kelas");
-        inputNamaField.classList.add("skeleton-box");
-        inputKelasField.classList.add("skeleton-box");
-
-        nextBtn.disabled = true;
-        nextBtn.textContent = "Memeriksa Database...";
-
-        const checkUrl = `${WEB_APP_URL}?action=checkName&nama=${encodeURIComponent(formattedNama)}`;
-
-        fetch(checkUrl)
-            .then(response => response.json())
-            .then(data => {
-                inputNamaField.classList.remove("skeleton-box");
-                inputKelasField.classList.remove("skeleton-box");
-                nextBtn.disabled = false;
-                nextBtn.textContent = "Lanjut ke Pemilihan →";
-
-                if (data.status === "blocked") {
-                    alert(`Maaf, nama "${formattedNama}" sudah terdaftar di database dan telah melakukan voting!`);
-                    return;
-                }
-
-                const lastVotedName = localStorage.getItem("votedName");
-                if (lastVotedName && lastVotedName.toLowerCase() === formattedNama.toLowerCase()) {
-                    localStorage.removeItem("votedName");
-                    localStorage.removeItem("hasVoted");
-                }
-
-                namaGlobal = formattedNama;
-                kelasGlobal = kelasInput;
-
-                greetingNama.textContent = namaGlobal;
-                greetingKelas.textContent = kelasGlobal;
-
-                step1.style.display = "none";
-                step2.style.display = "block";
-
-                stepIndicator1.classList.remove("active");
-                stepIndicator2.classList.add("active");
-
-                renderCarousel();
-            })
-            .catch(error => {
-                console.error("Error checking name:", error);
-                inputNamaField.classList.remove("skeleton-box");
-                inputKelasField.classList.remove("skeleton-box");
-                nextBtn.disabled = false;
-                nextBtn.textContent = "Lanjut ke Pemilihan →";
-
-                namaGlobal = formattedNama;
-                kelasGlobal = kelasInput;
-
-                greetingNama.textContent = namaGlobal;
-                greetingKelas.textContent = kelasGlobal;
-
-                step1.style.display = "none";
-                step2.style.display = "block";
-
-                stepIndicator1.classList.remove("active");
-                stepIndicator2.classList.add("active");
-
-                renderCarousel();
-            });
-    });
-
     function attachPaslonEventListeners() {
         document.querySelectorAll(".openInfoBtn").forEach(btn => {
             btn.addEventListener("click", function () {
@@ -268,11 +299,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 
                 confirmModal.style.display = "flex";
 
-                // PERBAIKAN TIMER 5 DETIK YANG STABIL
                 if (countdownInterval) clearInterval(countdownInterval);
 
                 let timeLeft = 5;
                 confirmVoteBtn.disabled = true;
+                confirmVoteBtn.classList.add("btn-disabled-timer");
                 confirmVoteBtn.innerHTML = `Tunggu (<span id="countdownTimer">${timeLeft}s</span>)`;
 
                 countdownInterval = setInterval(() => {
@@ -285,6 +316,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (timeLeft <= 0) {
                         clearInterval(countdownInterval);
                         confirmVoteBtn.disabled = false;
+                        confirmVoteBtn.classList.remove("btn-disabled-timer");
                         confirmVoteBtn.textContent = "Ya, Kirim Suara";
                     }
                 }, 1000);
@@ -299,14 +331,11 @@ document.addEventListener("DOMContentLoaded", function () {
         confirmModal.style.display = "none";
     });
 
-    // --- KIRIM SUARA KE GOOGLE SHEETS DENGAN BOUNCING DOTS YANG BENAR ---
     confirmVoteBtn.addEventListener("click", function () {
         if (this.disabled) return;
 
         confirmVoteBtn.disabled = true;
         cancelModalBtn.disabled = true;
-        
-        // Memastikan struktur HTML bouncing dots dirender sempurna
         confirmVoteBtn.innerHTML = `Mengirim <span class="bouncing-dots"><span></span><span></span><span></span></span>`;
 
         const payload = {
@@ -322,9 +351,6 @@ document.addEventListener("DOMContentLoaded", function () {
             body: JSON.stringify(payload)
         })
         .then(() => {
-            localStorage.setItem("hasVoted", "true");
-            localStorage.setItem("votedName", namaGlobal);
-
             confirmModal.style.display = "none";
             successModal.style.display = "flex";
         })

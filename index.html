@@ -3,13 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Voting OSIS</title>
+    <title>E-Voting OSIS 3 Tahap</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        #step2.hidden {
-            display: none;
-        }
-    </style>
 </head>
 <body>
 
@@ -18,60 +13,61 @@
         <div class="card-header">
             <h2>E-Voting OSIS</h2>
             <div class="theme-switch-wrapper">
-                <label class="theme-switch" for="checkbox" aria-label="Ganti tema">
-                    <input type="checkbox" id="checkbox" aria-label="Ganti tema" title="Ganti tema" />
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" />
                     <div class="slider round"></div>
                 </label>
-                <span id="theme-label" aria-label="Theme status">🌙</span>
+                <span id="theme-label">🌙</span>
             </div>
         </div>
 
-        <!-- Stepper Indicator -->
+        <!-- Stepper Indicator (1. Status - 2. Nama - 3. Paslon) -->
         <div class="stepper">
-            <div class="step step-1 active" id="stepIndicator1">
+            <div class="step active" id="stepIndicator1">
                 <span class="step-number">1</span>
-                <span class="step-label">Identitas</span>
+                <span class="step-label">Status</span>
             </div>
             <div class="step-line"></div>
-            <div class="step step-2" id="stepIndicator2">
+            <div class="step" id="stepIndicator2">
                 <span class="step-number">2</span>
-                <span class="step-label">Pilihan Paslon</span>
+                <span class="step-label">Nama</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" id="stepIndicator3">
+                <span class="step-number">3</span>
+                <span class="step-label">Paslon</span>
             </div>
         </div>
 
-        <!-- LANGKAH 1: INPUT IDENTITAS -->
+        <!-- TAHAP 1: PILIH KELAS / STATUS (Otomatis dari Master_Siswa) -->
         <div id="step1" class="step-content">
             <div class="form-group">
-                <label for="nama">Nama Lengkap</label>
-                <input type="text" id="nama" placeholder="Masukkan Nama Lengkap Anda" autocomplete="off" required>
-            </div>
-
-            <div class="form-group">
-                <label for="kelas">Kelas</label>
+                <label for="kelas">Pilih Status / Kelas Anda</label>
                 <select id="kelas" required>
-                    <option value="" disabled selected>Status</option>
-                    <option value="X-1">X-1</option>
-                    <option value="X-2">X-2</option>
-                    <option value="X-3">X-3</option>
-                    <option value="X-4">X-4</option>
-                    <option value="XI-1">XI-1</option>
-                    <option value="XI-2">XI-2</option>
-                    <option value="XI-3">XI-3</option>
-                    <option value="XI-4">XI-4</option>
-                    <option value="XII-1">XII-1</option>
-                    <option value="XII-2">XII-2</option>
-                    <option value="XII-3">XII-3</option>
-                    <option value="XII-4">XII-4</option>
-                    <option value="Staff">Staff</option>
-                    <option value="Guru">Guru</option>
+                    <option value="" disabled selected>
+                        Pilih Status
+                    </option>
                 </select>
             </div>
-
-            <button type="button" id="nextBtn" class="btn btn-primary">Lanjut ke Pemilihan &rarr;</button>
+            <button type="button" id="nextToStep2Btn" class="btn btn-primary">Lanjut Pilih Nama &rarr;</button>
         </div>
 
-        <!-- LANGKAH 2: SLIDER / CAROUSEL 5 PASLON -->
-        <div id="step2" class="step-content hidden">
+        <!-- TAHAP 2: PILIH NAMA DARI LIST KELAS TERSEBUT -->
+        <div id="step2" class="step-content" style="display: none;">
+            <div class="form-group">
+                <label for="pilihNama">Pilih Nama Lengkap Anda (<span id="labelKelasTerpilih">...</span>)</label>
+                <select id="pilihNama" required>
+                    <option value="" disabled selected>Pilih Nama Anda</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" id="backToStep1Btn" class="btn btn-secondary">&larr; Kembali</button>
+                <button type="button" id="nextToStep3Btn" class="btn btn-primary">Lanjut ke Pemilihan &rarr;</button>
+            </div>
+        </div>
+
+        <!-- TAHAP 3: SLIDER / CAROUSEL 5 PASLON -->
+        <div id="step3" class="step-content" style="display: none;">
             <div class="user-greeting">
                 <p>Halo, <strong id="greetingNama">...</strong> (<span id="greetingKelas">...</span>)</p>
                 <small>Geser untuk melihat dan memilih kandidat:</small>
