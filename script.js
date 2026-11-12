@@ -96,7 +96,6 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentSlide = 0;
     let countdownInterval = null;
 
-    // --- MEMUAT KELAS DENGAN ANIMASI BOUNCING DOTS ---
     function loadKelasList() {
         kelasSelect.innerHTML = `<option value="" disabled selected>Memuat Kelas <span class="bouncing-dots"><span></span><span></span><span></span></span></option>`;
         

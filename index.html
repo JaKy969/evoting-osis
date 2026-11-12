@@ -14,7 +14,7 @@
             <h2>E-Voting OSIS</h2>
             <div class="theme-switch-wrapper">
                 <label class="theme-switch" for="checkbox">
-                    <input type="checkbox" id="checkbox" />
+                    <input type="checkbox" id="checkbox" aria-label="Toggle Dark Mode" />
                     <div class="slider round"></div>
                 </label>
                 <span id="theme-label">🌙</span>
@@ -43,31 +43,29 @@
         <div id="step1" class="step-content">
             <div class="form-group">
                 <label for="kelas">Pilih Status / Kelas Anda</label>
-                <select id="kelas" required>
-                    <option value="" disabled selected>
-                        Pilih Status
-                    </option>
+                <select id="kelas" required aria-label="Pilih Status / Kelas Anda">
+                    <option value="" disabled selected>Pilih Status</option>
                 </select>
             </div>
             <button type="button" id="nextToStep2Btn" class="btn btn-primary">Lanjut Pilih Nama &rarr;</button>
         </div>
 
         <!-- TAHAP 2: PILIH NAMA DARI LIST KELAS TERSEBUT -->
-        <div id="step2" class="step-content" style="display: none;">
+        <div id="step2" class="step-content hidden-section">
             <div class="form-group">
                 <label for="pilihNama">Pilih Nama Lengkap Anda (<span id="labelKelasTerpilih">...</span>)</label>
-                <select id="pilihNama" required>
+                <select id="pilihNama" required aria-label="Pilih Nama Lengkap Anda">
                     <option value="" disabled selected>Pilih Nama Anda</option>
                 </select>
             </div>
-            <div style="display: flex; gap: 10px;">
+            <div class="button-group-flex">
                 <button type="button" id="backToStep1Btn" class="btn btn-secondary">&larr; Kembali</button>
                 <button type="button" id="nextToStep3Btn" class="btn btn-primary">Lanjut ke Pemilihan &rarr;</button>
             </div>
         </div>
 
         <!-- TAHAP 3: SLIDER / CAROUSEL 5 PASLON -->
-        <div id="step3" class="step-content" style="display: none;">
+        <div id="step3" class="step-content hidden-section">
             <div class="user-greeting">
                 <p>Halo, <strong id="greetingNama">...</strong> (<span id="greetingKelas">...</span>)</p>
                 <small>Geser untuk melihat dan memilih kandidat:</small>
@@ -75,13 +73,13 @@
 
             <!-- Slider Container -->
             <div class="carousel-container">
-                <button type="button" id="prevSlide" class="carousel-nav-btn">&larr;</button>
+                <button type="button" id="prevSlide" class="carousel-nav-btn" aria-label="Geser ke Kandidat Sebelumnya">&larr;</button>
                 
                 <div class="carousel-track-container">
                     <div class="carousel-track" id="carouselTrack"></div>
                 </div>
 
-                <button type="button" id="nextSlide" class="carousel-nav-btn">&rarr;</button>
+                <button type="button" id="nextSlide" class="carousel-nav-btn" aria-label="Geser ke Kandidat Berikutnya">&rarr;</button>
             </div>
 
             <div class="carousel-indicators" id="carouselIndicators"></div>
@@ -89,11 +87,11 @@
     </div>
 
     <!-- POP-UP MODAL INFO (VISI MISI SCROLLABLE) -->
-    <div id="infoModal" class="modal">
+    <div id="infoModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalPaslonNama">
         <div class="modal-content scrollable-modal animated-popup">
-            <button type="button" class="close-modal-btn" id="closeInfoModal">&times;</button>
+            <button type="button" class="close-modal-btn" id="closeInfoModal" aria-label="Tutup Modal Info">&times;</button>
             <div class="modal-img-container">
-                <img id="modalPaslonImg" src="" alt="Paslon" class="paslon-img">
+                <img id="modalPaslonImg" src="" alt="Foto Kandidat Paslon" class="paslon-img">
             </div>
             <h3 id="modalPaslonNama">Nama Paslon</h3>
             <p id="modalPaslonSlogan" class="modal-slogan">Slogan</p>
@@ -108,7 +106,7 @@
     </div>
 
     <!-- POP-UP MODAL KONFIRMASI PEMILIHAN (DENGAN TIMER 5 DETIK) -->
-    <div id="confirmModal" class="modal">
+    <div id="confirmModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-content animated-popup">
             <h3>Konfirmasi Pilihan</h3>
             <p>Apakah Anda yakin ingin memilih <strong id="selectedPaslonText">Paslon</strong>?</p>
@@ -121,9 +119,9 @@
     </div>
 
     <!-- POP-UP MODAL TERIMA KASIH -->
-    <div id="successModal" class="modal">
+    <div id="successModal" class="modal" role="dialog" aria-modal="true">
         <div class="modal-content success-box animated-popup">
-            <div class="success-icon">🎉</div>
+            <div class="success-icon" aria-hidden="true">🎉</div>
             <h3>Terima Kasih!</h3>
             <p>Suara Anda berhasil direkam dalam sistem e-voting.</p>
             <p class="modal-subtext">Partisipasi Anda sangat berarti untuk kemajuan sekolah.</p>
